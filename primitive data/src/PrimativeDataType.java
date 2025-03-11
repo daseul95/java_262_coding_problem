@@ -40,6 +40,17 @@ public class PrimativeDataType {
         return result;
     }
 
+    /* 비트 스왑  */
+    public static long swapBits(long x,int i,int j){
+        if(((x>>>i)&1)!=((x>>>j)&1)){   //i번째 비트와 j번째 비트가 다르다면, 각 비트를 뒤집어서 스왑을 구현
+            long bitMask = (1L<<i)|(1L<<j);   //bitMask을 사용해서 뒤집을 비트를 선택,
+            x ^= bitMask;                     //x=1일때 x^=0을 만족하고
+                                              //x=0일때 x^=1을 만족하므로,
+                                              //XOR을 사용해서 비트를 뒤집을 수 있음      
+        }
+
+        return x;
+    }
 
 }
 
