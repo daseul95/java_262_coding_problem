@@ -4,8 +4,8 @@ public class PrimativeDataType {
         System.out.println("Hello, World!");
     }
 
-    //정수에서 1로 세팅된 비트의 개수를 찾는 프로그램
-    //최하위 비트부터 시작해서 한번에 한 비트씩 테스트
+    /*정수에서 1로 세팅된 비트의 개수를 찾는 프로그램 */
+    //한번에 한 비트씩 테스트
     public static short countBits(int x){
         short numBits=0; // 1의 개수를 저장하는 역활
         while(x!=0){
