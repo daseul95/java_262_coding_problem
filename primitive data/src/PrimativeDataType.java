@@ -14,7 +14,7 @@ public class PrimativeDataType {
            /* 
 
            >> (부호 유지 우측 시프트)
-            왼쪽 빈 공간을 원래 부호 비트(MSB) 값으로 채움
+            왼쪽 빈 공간을 원래 부호 비트(MSB)(맨왼쪽,최상위비트) 값으로 채움
             즉, 음수는 음수로 유지됨
 
             >>> (부호 없는 우측 시프트)
@@ -53,7 +53,50 @@ public class PrimativeDataType {
         return x;
     }
 
-    /*비트 뒤집기는 언니컴에서 보고 병합하기 */
+    /*비트 뒤집기*/
+    //역순 연산을 필요로 하는 경우에 가장 효율적인 방법은 미리 16비트 숫자에 대한 룩업테이블 A를 만들어 놓는것
+    //미리 계산된 16비트 반전값을 활용하여 64비트 숫자를 빠르게 반전하는 방식
+    public static int[] precomputedRevers = new int[65536];
+
+    public static long revserBits(long x){
+        final int WORD_SIZE=16;               //16비트 단위 처리
+        final int BIT_MASK=0xFFFF;           //하위 16비트만 추출하는 마스크
+        return precomputedRevers[(int)(x&BIT_MASK)]<<(3*WORD_SIZE)          // 64비트 숫자를 16비트 단위로 분할하여 변환
+                                                                            // x & BIT_MASK → x의 하위 16비트를 추출 
+                                                                            // precomputedRevers[...] → 해당 16비트의 반전값을 조회 
+                                                                            // << (3 * WORD_SIZE) = << 48 → 맨 왼쪽(상위 16비트)로 이동
+
+        | precomputedRevers[(int)((x>>>WORD_SIZE)&BIT_MASK)]<<(2*WORD_SIZE) // x >>> WORD_SIZE → 16비트 오른쪽으로 이동하여 두 번째 16비트를 추출
+                                                                            // & BIT_MASK → 하위 16비트만 유지
+                                                                            // precomputedRevers[...] → 해당 16비트의 반전값을 조회
+                                                                            // << (2 * WORD_SIZE) = << 32 → 48비트 중 두 번째(32~47비트)에 배치
+
+        | precomputedRevers[(int)((x>>>(2*WORD_SIZE))&BIT_MASK)]<<WORD_SIZE //같은 방식으로 나머지 두 블록도 처리.
+        | precomputedRevers[(int)((x>>>(3*WORD_SIZE))&BIT_MASK)];
+        
+    }
+
+    // precomputedRevers 배열을 직접 보여주면 길이가 65536개이므로, 이를 생성하는 코드
+    static {                                                //static블록은 클래스가 로드될때 한번만 실행됨됨
+        for (int i = 0; i < 65536; i++) {
+            precomputedRevers[i] = reverse16Bits(i);        // 각 숫자의 비트를 반전한 값을 precomputedReverse 배열에 저장함
+                                                            // 비트 반전 작업은 reverse16Bits(i)함수에서 수행됨
+        }                                                   // precomputedRevers[i]는 i의 16비트 비트 반전 결과를 저장한 배열이 됨
+    }
+    
+    private static int reverse16Bits(int x) {
+        int result = 0;                                     //반전된 비트를 저장할 변수
+        for (int i = 0; i < 16; i++) {
+            result |= ((x >>> i) & 1) << (15 - i);          //맨 오른쪽(최하위비트)가 i번째 비트가 되도록함 
+                                                            // & 연산을 통해 i번째 비트 값을 가져옴(0 또는 1)
+                                                            // <<(15 - i) 가져온 비트를 반대쪽으로 이동
+                                                            // 오른쪽에서 i번째 비트를 왼쪽에서 (15-i)번째 위치로 보냄
+                                                            // result 변수에 반전된 비트를 or(|=)연산으로 저장
+
+        }
+        return result;                                      
+    }
+
 
 
     /* 같은 무게를 가진 가장 가까운 정수 찾기 (무게는 2진수로 표현했을때 1의 개수) */

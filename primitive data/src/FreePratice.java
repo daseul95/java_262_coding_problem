@@ -101,6 +101,70 @@ public class FreePratice {
             return x;                                      //x=13 이됨 
         } 
 
+        public static long p2SwapBits(long x,int i,int j){
+            if(((x>>>i)&1)!=((x>>>j)&1)){         // 같지 않으므로 스왑해야 한다. 
+                long bitMask = (1L<<i)|(1L<<j);   // 결과는 i자리과 j자리에 1이 채워지고 나머지는 0이 채워짐
+                x^=bitMask;                       // i와 j자리에 1이있는 곳에 XOR연산이므로 
+                                                  //i와 j자리에 1이있으면 0으로 스왑(1,1->false)되고 
+                                                  //            0이 있으면 1로 스왑(1,0->true)됨 
+            } 
+
+            return x;                              //스왑된 x를 반환함
+        }
+
+        public static long p3SwapBits(long x,int i,int j){
+            if(((x>>>i)&1)!=((x>>>j)&1)){
+                long bitMask = (1L<<i)|(1L<<j);
+                x^=bitMask;
+            }
+            return x;
+        }
+
+            
+
+
+          /*비트 뒤집기*/
+
+          public static final int BIT_SIZE = 16;
+          public static final int ARRAY_SIZE = 1 << BIT_SIZE; // 65536 자동 계산 , 2^16승
+          
+          public static int[] precomputedRevers = new int[ARRAY_SIZE]; //배열로 정의
+                
+            public static long revserBits(long x){
+                final int WORD_SIZE=16;               //16비트 단위 처리
+                final int BIT_MASK=0xFFFF;           //하위 16비트만 추출하는 마스크
+                return precomputedRevers[(int)(x&BIT_MASK)]<<(3*WORD_SIZE)          // 64비트 숫자를 16비트 단위로 분할하여 변환
+                                                                                    // x & BIT_MASK → x의 하위 16비트를 추출 
+                                                                                    // precomputedRevers[...] → 해당 16비트의 반전값을 조회 
+                                                                                    // << (3 * WORD_SIZE) = << 48 → 맨 왼쪽(상위 16비트)로 이동
+
+                | precomputedRevers[(int)((x>>>WORD_SIZE)&BIT_MASK)]<<(2*WORD_SIZE) // x >>> WORD_SIZE → 16비트 오른쪽으로 이동하여 두 번째 16비트를 추출
+                                                                                    // & BIT_MASK → 하위 16비트만 유지
+                                                                                    // precomputedRevers[...] → 해당 16비트의 반전값을 조회
+                                                                                    // << (2 * WORD_SIZE) = << 32 → 48비트 중 두 번째(32~47비트)에 배치
+
+                | precomputedRevers[(int)((x>>>(2*WORD_SIZE))&BIT_MASK)]<<WORD_SIZE //같은 방식으로 나머지 두 블록도 처리.
+                | precomputedRevers[(int)((x>>>(3*WORD_SIZE))&BIT_MASK)];
+                
+            }
+
+            // precomputedRevers 배열을 직접 보여주면 길이가 65536개이므로, 이를 생성하는 코드
+            static {
+                for (int i = 0; i < ARRAY_SIZE; i++) {
+                    precomputedRevers[i] = reverse16Bits(i);
+                }
+            }
+            
+            private static int reverse16Bits(int x) {
+                int result = 0;
+                for (int i = 0; i < 16; i++) {
+                    result |= ((x >>> i) & 1) << (15 - i);
+                }
+                return result;
+            }
+
+        
+
         
 
 
