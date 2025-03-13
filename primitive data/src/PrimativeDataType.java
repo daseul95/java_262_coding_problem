@@ -58,8 +58,8 @@ public class PrimativeDataType {
     //미리 계산된 16비트 반전값을 활용하여 64비트 숫자를 빠르게 반전하는 방식
     public static int[] precomputedRevers = new int[65536];
 
-    public static long revserBits(long x){
-        final int WORD_SIZE=16;               //16비트 단위 처리
+    public static long revserBits(long x){     // x는 64비트임
+        final int WORD_SIZE=16;               //16비트씩 단위 처리
         final int BIT_MASK=0xFFFF;           //하위 16비트만 추출하는 마스크
         return precomputedRevers[(int)(x&BIT_MASK)]<<(3*WORD_SIZE)          // 64비트 숫자를 16비트 단위로 분할하여 변환
                                                                             // x & BIT_MASK → x의 하위 16비트를 추출 
@@ -139,10 +139,10 @@ public class PrimativeDataType {
         x 0110    (6)
        ------------
            0000    (6의 0번째 비트)
-        + 1101     (6의 1번째 비트, 13을 왼쪽으로 한 칸 이동)
-        + 11010    (6의 2번째 비트, 13을 왼쪽으로 두 칸 이동)
+        + 11010    (6의 1번째 비트, 13을 왼쪽으로 한 칸 이동)
+       + 110100    (6의 2번째 비트, 13을 왼쪽으로 두 칸 이동)
        ------------
-          011110   (78, 즉 13 * 6)
+         011110   (78, 즉 13 * 6)
        즉, 각 비트가 1인 위치에서 y 값을 왼쪽으로 이동한 값을 더하는 방식으로 곱셈을 수행합니다.
      */
 
