@@ -262,6 +262,18 @@ public class FreePratice {
         return sum;
     }
 
+    public static long p2Multiply(long x, long y){
+        long sum=0;
+        while(x!=0){
+            if((x&1)!=0){
+                sum = add(sum,y);
+            }
+            x>>>=1;
+            x<<=1;
+        }
+        return sum;
+    }
+
     /*
      * 곱셈을 수행하는 핵심 아이디어는 "이진수 곱셈"입니다.
      * 일반적인 곱셈 연산을 이진수로 표현하면 다음과 같습니다.

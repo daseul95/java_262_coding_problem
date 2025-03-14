@@ -1,4 +1,8 @@
 
+
+
+
+
 public class PrimativeDataType {
     public static void main(String[] args) throws Exception {
         System.out.println("Hello, World!");
@@ -178,7 +182,120 @@ public class PrimativeDataType {
 
  
 
+    /* x / y 계산하기 */
+    public static long divide(long x,long y){
+        long result = 0;
+        int power = 32;
+        long yPower = y<<power;
+        while(x >= y){
+            while(yPower > x){
+            yPower >>>= 1;
+            --power;
+            }
+        
+        result += 1<< power;
+        x -= yPower;
+    }
+    return result;  }
 
+
+    /* x^y 계산하기 */
+    public static double power(double x,int y){
+        double result = 1.0;
+        long power = y; 
+        if(y < 0){
+            power = -power;
+            x=1.0 / x;
+        }
+        while(power != 0 ){
+            if((power&1) != 0){
+                result *= x;
+            }
+            x *= x;
+            power >>>= 1;
+        }
+        return result;
+    }
+
+
+    /* 숫자 뒤집기 */
+    public static long reverse(int x){
+        long result = 0;
+        long xRemaining = Math.abs(x);
+        while(xRemaining != 0){
+            result = result * 10 + xRemaining % 10;
+            xRemaining /= 10;
+        }
+        return x < 0 ? -result : result;
+    }
+
+    /* 회문 확인하기 */
+    public static boolean isPalindromeNumber(int x) {
+        if (x<0){
+            return false;
+        }
+
+        final int numDigits = (int)(Math.floor(Math.log10(x))) + 1;
+        int msdMask = (int)Math.pow(10, numDigits -1);
+        for(int i = 0;i<(numDigits/2);++i){
+            if(x/msdMask != x%10){
+                return false;
+            }
+        x %= msdMask;
+        x /= 10;
+        msdMask /= 100;
+        }
+
+        return true;
+    }
+
+    /*임의의 숫자를 균등한 확률로 생성하기 */
+    public static int uniformRandom(int lowerBound,int upperBound){
+        int numberOfOutcomes = upperBound - lowerBound + 1, result;
+        do { 
+            result = 0;
+            for(int i= 0 ;(1<<i)<numberOfOutcomes;++i){
+                result = (result << 1) | zeroOneRandom();  //zeroOneRaondom()은 임의의 숫자를 생성하는 함수수
+            }
+        }while( result >= numberOfOutcomes);
+        return result + lowerBound;
+    }
     
+    public static int zeroOneRandom() {
+        return Math.random() < 0.5 ? 0 : 1;
+    }
+
+
+    /* 사각형이 겹치는 확인하기 */
+    public static class Rectangle{
+        public int x;
+        public int y;
+        public int width;
+        public int height;
+
+        public Rectangle(int x, int y, int width, int height){
+            this.x = x;
+            this.y  = y;
+            this.width = width;
+            this.height = height;
+        }
+
+    public static Rectangle intersectRectangle(Rectangle R1, Rectangle R2){
+        if(!isIntersect(R1,R2)){
+            return new Rectangle(0,0,-1,-1);
+        }
+
+        return new Rectangle(
+            Math.max(R1.x,R2.x), Math.max(R1.y, R2.y),
+             Math.min(R1.x+R1.width, R2.x+R2.width)-Math.max(R1.x,R2.x)
+             ,Math.min(R1.y+R1.height,R2.y+R2.height)-Math.max(R1.y,R2.y));
+    }
+
+    public static boolean isIntersect(Rectangle R1,Rectangle R2){
+        return R1.x <= R2.x + R2.width && R1.x + R1.width >= R2.x
+        && R1.y <= R2.y + R2.height && R1.y + R1.height >= R2.y;
+    }
+    }
+
 }
 
