@@ -1,6 +1,9 @@
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 
 /* 배열 */
 
@@ -54,5 +57,48 @@ public class Array {
         return A;
     }
     
+    /* 임의의 두 정수값 곱하기 */
+
+    public static List<Integer> multiply(List<Integer> num1, List<Integer> num2){
+        //두 숫자의 부호가 다르면 -1, 같으면 1을 반환하는 표현식입니다.
+        /* 자바에서 ^는 비트 단위 XOR 연산자입니다.
+            하지만 피연산자가 boolean이라면 논리 XOR로 작동해요.
+            이 두 조건이 다를 경우 (즉, 하나는 음수고 하나는 양수거나 0) → -1
+            같을 경우 (둘 다 음수이거나, 둘 다 양수/0) → 1 */
+        final int sign = num1.get(0) < 0 ^ num2.get(0) < 0 ? -1 : 1;
+        num1.set(0,Math.abs(num1.get(0)));
+        num2.set(0,Math.abs(num2.get(0)));
+        
+        // Collections.nCopies(n, obj) 는 같은 객체를 n번 복사해서 리스트를 만드는 메서드예요.
+        // 이 메서드는 **불변 리스트(immutable list)**를 반환하지만, new ArrayList<>(...)를 씌우면
+        // 수정 가능한 리스트로 변환할 수 있어요.
+        List<Integer> result =  new ArrayList<>(Collections.nCopies(num1.size() + num2.size(), 0 ));
+
+
+        for(int i = num1.size() - 1; i>= 0; --i){                               // num1의 마지막 자리(일의자리)부터 곱하기 시작
+            for(int j = num2.size() -1; j >= 0; --j){                           // 끝에서부터 앞으로 이동동
+                result.set(i+j+1, result.get(i+j+1) + num1.get(i) * num2.get(j)); // 현재 위치에서 값을 누적
+                result.set(i+j, result.get(i+j) + result.get(i+j+1) / 10 );       // result[i+j+1] 값이 10 이상이면,
+                                                                                  // 10으로 나눈 몫을 result[i+j]에 더함
+                                                                                  // 즉, i+j 위치로 올림됨
+                result.set(i+j+1, result.get(i+j+1) % 10);                       // result[i+j+1] 값이 10 이상이면 일의 자리만 남기고 
+                                                                                 // 나머지는 올림
+                                                                                 // result[i+j+1] % 10을 사용하여 한 자리 숫자로 만듦
+
+
+            }
+        }
+        // 0ㅇ로 시작하는 부분을 제거한다.
+        int first_not_zoro = 0;
+        while( first_not_zoro < result.size() && result.get(first_not_zoro) == 0) {
+            ++first_not_zoro;
+        }
+        result = result.subList(first_not_zoro, result.size());
+        if(result.isEmpty()){
+            return Arrays.asList(0);
+        }
+         result.set(0, result.get(0) * sign);
+         return result; 
+        }
     
 }
