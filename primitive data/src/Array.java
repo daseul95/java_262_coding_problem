@@ -88,7 +88,10 @@ public class Array {
 
             }
         }
-        // 0ㅇ로 시작하는 부분을 제거한다.
+        // 0으로 시작하는 부분을 제거한다.
+        // 이 코드는 숫자 리스트에서 앞쪽의 0을 제거하고, 
+        // 남은 숫자 중 첫 번째 숫자에 부호를 적용하여 반환하는 역할을 함.
+        // 0만 있으면 [0] 반환 
         int first_not_zoro = 0;
         while( first_not_zoro < result.size() && result.get(first_not_zoro) == 0) {
             ++first_not_zoro;
@@ -97,8 +100,45 @@ public class Array {
         if(result.isEmpty()){
             return Arrays.asList(0);
         }
-         result.set(0, result.get(0) * sign);
-         return result; 
+         result.set(0, result.get(0) * sign); 
+    return result; 
         }
+
+
+        /* 배열에서 이동하기 */
+
+        // 이 알고리즘은 현재 위치에서 가장 멀리 나아갈 수 있는 지점을 기록합니다.
+        public static boolean canReachEnd(List<Integer> maxAdvanceSteps){
+            int furthestReachSoFar = 0;
+            int lastIndex = maxAdvanceSteps.size() - 1;
+            for(int i = 0 ; i <= furthestReachSoFar && furthestReachSoFar < lastIndex; ++i){
+                furthestReachSoFar = Math.max(furthestReachSoFar, i + maxAdvanceSteps.get(i));
+            }
+            return furthestReachSoFar >= lastIndex;
+        }
+
+        
+        /* 정렬된 배열에서 중복 제거하기 */
+
+        // 기존 배열을 덮어쓰면서 중복을 제거한다.
+        // 굳이 시프트 안해도 됨
+        public static int deleteDuplicates(List<Integer> A){
+            if(A.isEmpty()){
+                return 0;
+            }
+
+            int writeIndex = 1;
+            // i는 리스트를 탐색하는 읽기 인덱스 , 새로운 값이 나왔는지 체크함
+            // writeIndex는 중복을 제거하고 저장할 쓰기 인덱스 , writeIndex위치에 A[i] 의 값을 덮어씀
+            for(int i = 1; i< A.size(); ++i){
+                if(!A.get(writeIndex - 1).equals(A.get(i))){
+                    A.set(writeIndex++,A.get(i));
+                }
+                                                             // A[i]가 같으면 
+                                                             // 중복된 값이므로 무시하고 다음 값으로 넘어감
+            }
+            return writeIndex;                  // 중복을 제거한 배열의 길이를 반환함.
+        }
+
     
 }
